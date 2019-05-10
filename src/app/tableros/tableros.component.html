@@ -1,0 +1,281 @@
+<app-header></app-header>
+<div class="columns">
+  <div class="column">
+    <form [formGroup]="formFiltro" novalidate>
+      <div class="columns">
+        <div class="column is-hidden-mobile is-one-fifth"></div>
+        <div class="column">
+          <div class="control">
+            <br>
+            <div class="col-md- 8col-sm-8 col-xs-8" align="center">
+              <label class="label is-small is-required">Buscar:</label>
+              <input type="text" placeholder="Busque tableros por el titulo"
+                     (keyup)="onKeyUpBuscador($event.target.value)"
+                     class="input is-small primaryFields" autofocus tabindex="1"
+                     formControlName="titulo_filtro" maxlength="100">
+              <div class=""></div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-hidden-mobile is-one-fifth"></div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="card flex-card">
+  <div class="card-content">
+    <ng-container *ngFor="let tablero of tableros[0], let i=index;">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+            {{tablero.titulo|uppercase}} -&nbsp; <small> {{ tablero.descripcion}}</small> &nbsp;
+            <span class="tag is-warning">{{ tablero.tipo_tablero}}</span> &nbsp; &nbsp;
+            <span class="tag is-info" *ngIf="tablero.creado_por == id_user">MI TABLERO</span> &nbsp; &nbsp;
+            <span class="tag is-default">Creado por: {{tablero.creado_por_username}}</span> &nbsp; &nbsp;
+          </p>
+          <a  *ngIf="tablero.creado_por == id_user" (click)="eliminarTablero(tablero.id)" class="card-header-icon" aria-label="more options">
+              <span class="icon">
+                <i class="fas fa-trash" aria-hidden="true"></i><SMALL STYLE="font-size: 10px">ELIMINAR TABLERO</SMALL>
+              </span>
+          </a>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a (click)="setIdTableroNuevaIdea(tablero.id, tablero.tipo_tablero, tablero.creado_por)" class="card-header-icon" aria-label="more options">
+              <span class="icon">
+                <i class="fas fa-plus" aria-hidden="true"></i><SMALL STYLE="font-size: 10px">NUEVA IDEA</SMALL>
+              </span>
+          </a>
+        </header>
+
+        <div class="card-content">
+          <div class="content">
+            <ng-container *ngFor="let idea of tableros[1]">
+                 <span class="tag"
+                       [ngClass]="{'': idea.aprobada == 'SI',
+                              'is-danger': idea.aprobada == 'NO'}"
+                       *ngIf="tablero.id === idea.tablero && idea.aprobada == 'SI'">
+                  {{idea.descripcion}}
+                   <button (click)="eliminarIdea(idea.id, tablero.creado_por)" class="button is-small is-text">eliminar</button>&nbsp;&nbsp;
+                   <button (click)="editarIdeaFormModal(idea,tablero)" class="button is-small is-text">editar</button>
+                </span>
+              &nbsp;&nbsp;
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="card-content" *ngIf="tablero.tipo_tablero  == 'PUBLICO'">
+          <div class="content">
+            <hr>
+            <small>IDEAS SIN GESTIONAR REALIZADAS POR OTROS USUARIOS:</small>
+            <ng-container *ngFor="let idea of tableros[1]">
+                 <span class="tag"
+                       [ngClass]="{'is-success': idea.aprobada == 'SI',
+                              'is-warning': idea.aprobada == 'NO'}"
+                       *ngIf="tablero.id === idea.tablero && idea.aprobada == 'NO'">
+                  {{idea.descripcion}}
+                   <button (click)="eliminarIdea(idea.id, tablero.creado_por)" class="button is-small is-text">eliminar</button>&nbsp;&nbsp;
+                   <button (click)="aprobarIdea(idea, tablero)" class="button is-small is-text">aprobar</button>
+
+                </span>
+              &nbsp;&nbsp;
+            </ng-container>
+          </div>
+        </div>
+
+      </div>
+      <br>
+    </ng-container>
+    <div class="columns">
+      <div class="column" ALIGN="left">
+        <br>
+        <a (click)="crear_tablero=true">
+          <span class="icon is-large">
+        <span class="fa-stack has-text-success">
+          <i class="fas fa-circle fa-stack-2x fa-2x"></i>
+          <i class="fas fa-plus fa-stack-1x fa-4x fa-inverse"></i>
+        </span>
+        </span>
+         &nbsp; &nbsp; &nbsp;NUEVO TABLERO
+        </a>
+
+        <br>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" [ngClass]="{ 'is-active': crear_tablero }">
+  <div class="modal-background" [ngClass]="{ 'scaleInCircle': crear_tablero }"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <h4>
+        <p class="modal-card-title">Crear nuevo tablero</p>
+      </h4>
+    </header>
+    <section class="modal-card-body has-text-justified">
+      <form [formGroup]="formTablero" novalidate>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+          <div class="column">
+            <div class="control">
+              <div class="col-md- 8col-sm-8 col-xs-8" align="center">
+                <label class="label is-small is-required">Titulo</label>
+                <input type="text" placeholder="Ingrese el titulo"
+                       class="input is-small primaryFields" autofocus tabindex="1"
+                       formControlName="titulo" maxlength="100">
+                <div class=""></div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+        </div>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+          <div class="column">
+            <div class="control">
+              <div class="col-md-8 col-sm-8 col-xs-8" align="center">
+                <label class="label is-small is-required">Descripción</label>
+                <textarea  placeholder="Ingrese la descripción" tabindex="2"
+                       class="textarea is-small primaryFields"
+                          formControlName="descripcion" maxlength="200"></textarea>
+                <div class=""></div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+        </div>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+          <div class="column">
+            <div class="control">
+              <div class="col-md-8 col-sm-8 col-xs-8" align="center">
+                <label class="label is-small is-required">Tipo</label>
+                <div class="select is-small is-fullwidth">
+                  <select formControlName="tipo" tabindex="1">
+                    <option [value]="'PUBLICO'">PÚBLICO</option>
+                    <option [value]="'PRIVADO'">PRIVADO</option>
+                  </select>
+                </div>
+                <div class=""></div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="col-md-12 col-sm-12 col-xs-12" align="center">
+              <button type="submit" class="button is-link" [disabled]="!formTablero.valid"
+                      (click)="crearTablero()">Registrar tablero
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-small"  (click)="crear_tablero=false">Cerrar</button>
+    </footer>
+  </div>
+</div>
+
+
+
+<div class="modal" [ngClass]="{ 'is-active': crear_idea }">
+  <div class="modal-background" [ngClass]="{ 'scaleInCircle': crear_idea }"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <h4>
+        <p *ngIf="!editar_idea" class="modal-card-title">Crear nueva idea</p>
+        <p *ngIf="editar_idea" class="modal-card-title">Editar idea</p>
+      </h4>
+    </header>
+    <section class="modal-card-body has-text-justified">
+      <form [formGroup]="formIdea" novalidate>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+          <div class="column">
+            <div class="control">
+              <div class="col-md-8 col-sm-8 col-xs-8" align="center">
+                <label class="label is-small is-required">Descripción</label>
+                <textarea  placeholder="Ingrese la descripción" tabindex="2"
+                           class="textarea is-small primaryFields"
+                           formControlName="descripcion" maxlength="300"></textarea>
+                <div class=""></div>
+              </div>
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-one-fifth"></div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="col-md-12 col-sm-12 col-xs-12" align="center">
+              <button type="submit" class="button is-link" *ngIf="!editar_idea" [disabled]="!formIdea.valid"
+                      (click)="crearIdea()">Registrar idea
+              </button><button type="submit" class="button is-link" *ngIf="editar_idea" [disabled]="!formIdea.valid"
+                      (click)="editarIdea()">Editar idea
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-small"  (click)="cancelar()">Cerrar</button>
+    </footer>
+  </div>
+</div>
+
+
+<div class="modal" [ngClass]="{ 'is-active': modal_aviso_creacion_idea }">
+  <div class="modal-background" [ngClass]="{ 'scaleInCircle': modal_aviso_creacion_idea }"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <h4>
+        <p class="modal-card-title">Atención</p>
+      </h4>
+    </header>
+    <section class="modal-card-body has-text-justified">
+     Este formulario es privado y pertenece a otro usuario, por lo tanto no puede agregar ideas
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-small"  (click)="modal_aviso_creacion_idea=false">Cerrar</button>
+    </footer>
+  </div>
+</div>
+
+
+<div class="modal" [ngClass]="{ 'is-active': modal_aviso_eliminacion_idea }">
+  <div class="modal-background" [ngClass]="{ 'scaleInCircle': modal_aviso_eliminacion_idea }"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <h4>
+        <p class="modal-card-title">Atención</p>
+      </h4>
+    </header>
+    <section class="modal-card-body has-text-justified">
+      Usted no puede eliminar esta idea porque pertenece a un tablero de otro usuario
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-small"  (click)="modal_aviso_eliminacion_idea=false">Cerrar</button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal" [ngClass]="{ 'is-active': no_puede_editar_idea }">
+  <div class="modal-background" [ngClass]="{ 'scaleInCircle': no_puede_editar_idea }"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <h4>
+        <p class="modal-card-title">Atención</p>
+      </h4>
+    </header>
+    <section class="modal-card-body has-text-justified">
+      Usted no puede realizar acciones a esta idea porque pertenece a un tablero de otro usuario
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-small"  (click)="no_puede_editar_idea=false">Cerrar</button>
+    </footer>
+  </div>
+</div>
+<app-footer></app-footer>

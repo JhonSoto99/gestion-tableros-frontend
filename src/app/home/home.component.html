@@ -1,0 +1,145 @@
+<app-header></app-header>
+<div class="container">
+  <div class="columns">
+    <div class="column"></div>
+  </div>
+  <div class="card flex-card" *ngIf="!form_registrar_user">
+    <div class="card-content">
+      <div class="columns" align="center">
+        <div class="column"><strong>LOGIN</strong></div>
+      </div>
+      <div class="columns" *ngIf="mostrar_notificacion_user_no_existe">
+        <div class="column">
+          <div class="control">
+            <div class="message is-small is-danger">
+              <p class="message-body">
+                <strong>Credenciales incorrectos</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="formLogin">
+        <div class="columns">
+          <div class="column is-hidden-mobile is-two-fifths"></div>
+          <div class="column">
+            <div class="control">
+              <label class="label is-small is-required">Usuario o Email</label>
+              <input type="text"
+                     placeholder="Ingrese el usuario o el email"
+                     class="input is-small primaryFields"
+                     formControlName="user_email" maxlength="20">
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-two-fifths "></div>
+        </div>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-two-fifths "></div>
+          <div class="column">
+            <div class="control">
+              <label class="label is-small is-required">Contraseña</label>
+              <input type="password" placeholder="Ingrese la contraseña"
+                     class="input is-small primaryFields"
+                     formControlName="password" maxlength="40">
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-two-fifths"></div>
+        </div>
+      </form>
+      <div class="columns" align="center">
+        <div class="column">
+          <button type="submit" (click)="login()" [disabled]="!formLogin.valid" class="button is-link is-small">Iniciar Sesión
+          </button>
+          &nbsp;
+          <button type="submit" (click)="form_registrar_user=true" class="button is-small">Registrarme
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card flex-card" *ngIf="form_registrar_user">
+    <div class="card-content">
+      <form [formGroup]="formRegistroUser">
+        <div class="columns">
+          <div class="column is-hidden-mobile is-two-fifths"></div>
+          <div class="column">
+            <div class="control">
+              <label class="label is-small is-required">Email o nombre de usuario</label>
+              <input type="text"
+                     placeholder="Ingrese el usuario o el email"
+                     class="input is-small primaryFields"
+                     formControlName="email_user" maxlength="20">
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-two-fifths "></div>
+        </div>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-two-fifths "></div>
+          <div class="column">
+            <div class="control">
+              <label class="label is-small is-required">Contraseña</label>
+              <input type="password" placeholder="Ingrese la contraseña"
+                     class="input is-small primaryFields"
+                     formControlName="password" maxlength="3">
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-two-fifths"></div>
+        </div>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-two-fifths"></div>
+          <div class="column">
+            <div class="control">
+              <label class="label is-small is-required">Identificación</label>
+              <input type="text"
+                     placeholder="Ingrese la identificación"
+                     class="input is-small primaryFields"
+                     formControlName="num_documento" maxlength="20">
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-two-fifths "></div>
+        </div>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-two-fifths"></div>
+          <div class="column">
+            <div class="control">
+              <label class="label is-small is-required">Nombres</label>
+              <input type="text"
+                     placeholder="Ingrese sus nombres"
+                     class="input is-small primaryFields"
+                     formControlName="nombres" maxlength="20">
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-two-fifths "></div>
+        </div>
+        <div class="columns">
+          <div class="column is-hidden-mobile is-two-fifths"></div>
+          <div class="column">
+            <div class="control">
+              <label class="label is-small is-required">Apellidos</label>
+              <input type="text"
+                     placeholder="Ingrese sus apellidos"
+                     class="input is-small primaryFields"
+                     formControlName="apellidos" maxlength="20">
+            </div>
+          </div>
+          <div class="column is-hidden-mobile is-two-fifths "></div>
+        </div>
+      </form>
+      <div class="columns" align="center">
+        <div class="column">
+          <button type="submit" (click)="crearUsuario()" [disabled]="!formRegistroUser.valid"  class="button is-link is-small">Registrarame
+          </button>
+          &nbsp;
+          <button type="submit" (click)="form_registrar_user=false" class="button is-small">Volver
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="columns">
+  <div class="column"></div>
+</div>
+<app-footer></app-footer>
